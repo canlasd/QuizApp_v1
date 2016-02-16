@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
                     public void onClick(View v) {
 
                         clicked = true;
-                        // start timer check if back button was not pressed
-
+                        // start timer
                         timer = new MyCounter(60000, 1000);
                         timer.start();
 

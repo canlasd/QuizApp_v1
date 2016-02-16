@@ -72,6 +72,8 @@ public class AlertDialogButton extends DialogFragment {
             }
         });
 
+
+
         // set custom title
         TextView custom_title = new TextView(this.getActivity());
         custom_title.setText(main_question);

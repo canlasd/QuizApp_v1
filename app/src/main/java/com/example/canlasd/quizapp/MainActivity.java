@@ -3,6 +3,7 @@ package com.example.canlasd.quizapp;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     private int next_key;
     private int correct_position;
     public static MyCounter timer;
+    private String PREFS_COUNT;
 
 
     @Override
@@ -195,11 +197,6 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
         number_entries = savedInstanceState.getLong("number_entries");
         current_time = savedInstanceState.getLong("current_time");
         clicked = savedInstanceState.getBoolean("clicked");
-        // restart timer after onPause
-        if (clicked) {
-            timer = new MyCounter(current_time, 1000);
-            timer.start();
-        }
 
     }
 
@@ -341,6 +338,42 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
             current_time = finish_params;
             timer_view.setText(("Time Remaining in seconds: " + finish_params / 1000) + "");
 
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+
+        SharedPreferences settings = getSharedPreferences(PREFS_COUNT, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong("current_time", current_time);
+
+
+        editor.commit();
+
+        if (timer != null) {
+            timer.cancel();
+        }
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences settings = getSharedPreferences(PREFS_COUNT, 0);
+        current_time = settings.getLong("current_time", current_time);
+
+        System.out.println(current_time);
+        System.out.println(clicked);
+        if (clicked) {
+            timer = new MyCounter(current_time, 1000);
+            System.out.println("new timer created");
+
+            timer.start();
         }
     }
 

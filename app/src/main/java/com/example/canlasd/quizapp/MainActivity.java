@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     public void onPause() {
         super.onPause();
 
-
+        // store current time
         SharedPreferences settings = getSharedPreferences(PREFS_COUNT, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong("current_time", current_time);
@@ -367,12 +367,9 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
         SharedPreferences settings = getSharedPreferences(PREFS_COUNT, 0);
         current_time = settings.getLong("current_time", current_time);
 
-        System.out.println(current_time);
-        System.out.println(clicked);
+
         if (clicked) {
             timer = new MyCounter(current_time, 1000);
-            System.out.println("new timer created");
-
             timer.start();
         }
     }

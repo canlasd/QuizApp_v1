@@ -31,22 +31,13 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     private static final String URL =
             "https://docs.google.com/document/u/0/export?format=txt&id=1MV7GHAvv4tgj98Hj6B_WZdeeEu7CRf1GwOfISjP4GT0";
 
-    private DBhelper DbHelper;
     private DBhelper DelHelper;
-    private DBhelper RowHelper;
-    private List<String> result;
-    private int array_length;
-    private JSONArray jsonArray;
-    private JSONArray multiple_choice;
     private long number_entries;
     private long current_time;
-    private String correct_string;
-    private int position = 0;
     private boolean clicked;
     private TextView timer_view;
     private int correct_answer;
     private int current_key;
-    private int next_key;
     private int correct_position;
     public static MyCounter timer;
     private String PREFS_COUNT;
@@ -99,19 +90,19 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     private void displayDialog(int key) {
 
         // get information from sqlite db
-        RowHelper = new DBhelper(this);
-        RowHelper.open();
+        DBhelper rowHelper = new DBhelper(this);
+        rowHelper.open();
         // get sqlite row based on key.  initial key is 1
-        result = RowHelper.getRowData(key);
-        number_entries = RowHelper.getNumberRows();
-        RowHelper.close();
+        List<String> result = rowHelper.getRowData(key);
+        number_entries = rowHelper.getNumberRows();
+        rowHelper.close();
 
         // get info from retrieved row
         String main_question = result.get(1);
         current_key = Integer.parseInt(result.get(0));
 
         // convert the correct answer to its equivalent number
-        correct_string = (result.get(2)).toLowerCase();
+        String correct_string = (result.get(2)).toLowerCase();
         correct_position = getEquivalentNumber(correct_string);
 
         List<String> question_items = result.subList(3, result.size());
@@ -136,14 +127,14 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     @Override
     public void onNextClick(int position) {
 
-        this.position = position;
+        int position1 = position;
 
         // check if returned answer is correct
         if (correct_position == position) {
             correct_answer++;
         }
         // move to next row
-        next_key = current_key + 1;
+        int next_key = current_key + 1;
 
         // check if there are any rows with data left in the sqlite db
         if (next_key > number_entries) {
@@ -216,8 +207,8 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
     // method to insert data to sqlite db
     private void insertData(int length, List<String> map, List<String> questions) {
 
-        DbHelper = new DBhelper(this);
-        DbHelper.open();
+        DBhelper dbHelper = new DBhelper(this);
+        dbHelper.open();
 
         if (length == 5) {
 
@@ -227,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
             String second = questions.get(1);
             String third = questions.get(2);
 
-            DbHelper.insertStdDetails(main, correct, first, second, third, null, null, null);
+            dbHelper.insertStdDetails(main, correct, first, second, third, null, null, null);
 
         } else if (length == 6) {
 
@@ -238,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
             String two_third = questions.get(2);
             String two_fourth = questions.get(3);
 
-            DbHelper.insertStdDetails(two_main, two_correct, two_first, two_second,
+            dbHelper.insertStdDetails(two_main, two_correct, two_first, two_second,
                     two_third, two_fourth, null, null);
 
         } else if (length == 7) {
@@ -251,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
             String three_fourth = questions.get(3);
             String three_fifth = questions.get(4);
 
-            DbHelper.insertStdDetails(three_main, three_correct, three_first,
+            dbHelper.insertStdDetails(three_main, three_correct, three_first,
                     three_second, three_third, three_fourth, three_fifth, null);
 
         } else if (length == 8) {
@@ -265,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
             String four_fifth = questions.get(4);
             String four_sixth = questions.get(5);
 
-            DbHelper.insertStdDetails(four_main, four_correct, four_first,
+            dbHelper.insertStdDetails(four_main, four_correct, four_first,
                     four_second, four_third, four_fourth, four_fifth, four_sixth);
 
         } else {
@@ -273,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
 
         }
 
-        DbHelper.close();
+        dbHelper.close();
 
     }
 
@@ -282,8 +273,8 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
 
         try {
             JSONObject jsonObject = new JSONObject(string);
-            jsonArray = jsonObject.getJSONArray("questions");
-            array_length = jsonArray.length();
+            JSONArray jsonArray = jsonObject.getJSONArray("questions");
+            int array_length = jsonArray.length();
 
             for (int i = 0; i < array_length; i++) {
 
@@ -292,8 +283,7 @@ public class MainActivity extends AppCompatActivity implements AlertPositiveList
 
                 String question_object = jsonArray.getJSONObject(i).getString("question");
                 String answer_object = jsonArray.getJSONObject(i).getString("answer");
-                multiple_choice =
-                        jsonArray.getJSONObject(i).getJSONArray("multiple_choice");
+                JSONArray multiple_choice = jsonArray.getJSONObject(i).getJSONArray("multiple_choice");
 
                 // put data into list
                 list.add(question_object);

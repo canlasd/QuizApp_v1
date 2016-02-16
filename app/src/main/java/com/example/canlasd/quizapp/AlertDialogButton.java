@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 
 public class AlertDialogButton extends DialogFragment {
-    private int position;
     private AlertPositiveListener alertPositiveListener;
 
 
@@ -39,7 +38,7 @@ public class AlertDialogButton extends DialogFragment {
         public void onClick(DialogInterface dialog, int which) {
             AlertDialog alert = (AlertDialog) dialog;
             // added 1 since item position starts at zero
-            position = alert.getListView().getCheckedItemPosition() + 1;
+            int position = alert.getListView().getCheckedItemPosition() + 1;
 
             alertPositiveListener.onNextClick(position);
         }
